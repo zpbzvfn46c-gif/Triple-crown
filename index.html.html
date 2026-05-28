@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="三冠王學院">
+<meta name="theme-color" content="#1a6b7a">
+<title>三冠王學院 Triple Crown Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #1a6b7a;
+    --teal-light: #2a8a9e;
+    --teal-dark: #0f4a56;
+    --gold: #c9a84c;
+    --gold-light: #e8cc80;
+    --cream: #f5f0e8;
+    --white: #ffffff;
+    --text-dark: #1a2a2e;
+    --text-mid: #3a5a60;
+    --card-bg: rgba(255,255,255,0.92);
+    --shadow: 0 4px 20px rgba(10,50,60,0.18);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--teal-dark);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SPLASH ── */
+  #splash {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(160deg, var(--teal-dark) 0%, var(--teal) 60%, var(--teal-light) 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px;
+    transition: opacity 0.6s ease;
+  }
+  #splash .crown { font-size: 64px; animation: bounce 1.2s ease infinite alternate; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+  #splash h1 { font-family: 'Noto Serif TC', serif; font-size: 28px; color: var(--gold-light); font-weight: 900; letter-spacing: 2px; }
+  #splash p { color: rgba(255,255,255,0.7); font-size: 14px; }
+  #splash.hide { opacity: 0; pointer-events: none; }
+
+  /* ── HEADER ── */
+  #header {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(90deg, var(--teal-dark), var(--teal));
+    padding: 14px 20px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  #header .logo { display: flex; align-items: center; gap: 8px; }
+  #header .logo-icon { font-size: 26px; }
+  #header .logo-text { font-family: 'Noto Serif TC', serif; color: var(--gold-light); font-size: 16px; font-weight: 900; line-height: 1.2; }
+  #header .logo-sub { color: rgba(255,255,255,0.6); font-size: 10px; font-weight: 300; }
+  #header .date-pill {
+    background: rgba(255,255,255,0.12); color: var(--gold-light);
+    border: 1px solid rgba(201,168,76,0.4); border-radius: 20px;
+    padding: 4px 12px; font-size: 11px; white-space: nowrap;
+  }
+
+  /* ── NAV TABS ── */
+  #nav {
+    background: var(--teal-dark);
+    display: flex; overflow-x: auto; gap: 4px;
+    padding: 6px 12px 8px; scrollbar-width: none;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  #nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
+    padding: 7px 14px; font-size: 12px; font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .nav-btn.active, .nav-btn:active {
+    background: var(--gold); color: var(--teal-dark); border-color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* ── MAIN ── */
+  #main { padding: 16px 14px 100px; max-width: 500px; margin: 0 auto; }
+
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card-bg); border-radius: var(--radius);
+    box-shadow: var(--shadow); margin-bottom: 14px;
+    border: 1px solid rgba(201,168,76,0.2); overflow: hidden;
+  }
+  .card-header {
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-header .icon { font-size: 18px; }
+  .card-header h2 { color: var(--white); font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 700; }
+  .card-body { padding: 14px 16px; }
+
+  /* ── QUOTE ── */
+  .quote-box {
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    border-radius: var(--radius); padding: 24px 20px; text-align: center;
+    border: 2px solid var(--gold); margin-bottom: 14px;
+    position: relative; overflow: hidden;
+  }
+  .quote-box::before {
+    content: '❝'; position: absolute; top: 8px; left: 14px;
+    font-size: 40px; color: rgba(201,168,76,0.25); line-height: 1;
+  }
+  .quote-box .label { color: var(--gold-light); font-size: 11px; letter-spacing: 3px; margin-bottom: 10px; text-transform: uppercase; }
+  .quote-box .quote-text { color: var(--white); font-family: 'Noto Serif TC', serif; font-size: 17px; font-weight: 700; line-height: 1.7; }
+  .quote-box .quote-num { color: rgba(255,255,255,0.4); font-size: 11px; margin-top: 10px; }
+  .btn-draw {
+    width: 100%; padding: 13px; border-radius: 12px; border: none;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    color: var(--teal-dark); font-size: 14px; font-weight: 700;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer; transition: transform 0.15s; letter-spacing: 1px;
+  }
+  .btn-draw:active { transform: scale(0.97); }
+
+  /* ── NEWS ── */
+  .news-item { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.07); display: flex; gap: 12px; align-items: flex-start; }
+  .news-item:last-child { border-bottom: none; }
+  .news-date { background: var(--teal); color: white; border-radius: 8px; padding: 4px 8px; font-size: 10px; white-space: nowrap; text-align: center; line-height: 1.4; min-width: 46px; }
+  .news-content h3 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+  .news-content p { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+  .badge { display: inline-block; background: var(--gold); color: var(--teal-dark); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; margin-bottom: 4px; }
+
+  /* ── SCHEDULE ── */
+  .day-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .day-tab { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--teal-light); background: transparent; color: var(--teal); font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: 'Noto Sans TC', sans-serif; }
+  .day-tab.active { background: var(--teal); color: white; border-color: var(--teal); font-weight: 700; }
+  .schedule-slot { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px dashed rgba(0,0,0,0.08); }
+  .schedule-slot:last-child { border-bottom: none; }
+  .slot-time { background: var(--teal-dark); color: var(--gold-light); border-radius: 8px; padding: 5px 8px; font-size: 11px; min-width: 70px; text-align: center; }
+  .slot-info h4 { font-size: 13px; font-weight: 700; color: var(--text-dark); }
+  .slot-info p { font-size: 11px; color: var(--text-mid); }
+  .slot-tag { margin-left: auto; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; }
+  .tag-cn { background: #e8f4e8; color: #2a7a2a; }
+  .tag-en { background: #e8ecf8; color: #2a3a8a; }
+  .tag-math { background: #f8ece8; color: #8a3a2a; }
+
+  /* ── LEADERBOARD ── */
+  .rank-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .rank-item:last-child { border-bottom: none; }
+  .rank-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; flex-shrink: 0; }
+  .rank-1 { background: linear-gradient(135deg, #ffd700, #ffa500); color: white; font-size: 16px; }
+  .rank-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: white; }
+  .rank-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: white; }
+  .rank-other { background: var(--cream); color: var(--text-mid); }
+  .rank-info { flex: 1; }
+  .rank-info h4 { font-size: 14px; font-weight: 700; }
+  .rank-info p { font-size: 11px; color: var(--text-mid); }
+  .rank-score { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 900; color: var(--teal); }
+  .rank-stars { color: var(--gold); font-size: 12px; }
+
+  /* ── TEACHERS ── */
+  .teacher-card { border-radius: 14px; overflow: hidden; background: var(--cream); border: 1px solid rgba(201,168,76,0.3); margin-bottom: 12px; }
+  .teacher-hero { background: linear-gradient(135deg, var(--teal-dark), var(--teal-light)); padding: 20px 16px; display: flex; align-items: center; gap: 14px; }
+  .teacher-avatar { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+  .teacher-meta h3 { font-family: 'Noto Serif TC', serif; color: white; font-size: 18px; font-weight: 900; }
+  .teacher-meta .subject { color: var(--gold-light); font-size: 12px; margin: 3px 0; }
+  .teacher-meta .motto { color: rgba(255,255,255,0.75); font-size: 12px; font-style: italic; }
+  .teacher-desc { padding: 12px 16px; font-size: 13px; color: var(--text-mid); line-height: 1.7; }
+
+  /* ── REGISTER ── */
+  .form-group { margin-bottom: 12px; }
+  .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-mid); margin-bottom: 5px; letter-spacing: 0.5px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; padding: 11px 14px; border-radius: 10px;
+    border: 1.5px solid rgba(26,107,122,0.2); background: var(--cream);
+    font-size: 14px; font-family: 'Noto Sans TC', sans-serif; color: var(--text-dark);
+    transition: border-color 0.2s; outline: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--teal); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .checkbox-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .checkbox-item { display: flex; align-items: center; gap: 5px; }
+  .checkbox-item input { accent-color: var(--teal); }
+  .btn-primary {
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    color: white; font-size: 15px; font-weight: 700;
+    font-family: 'Noto Sans TC', sans-serif; cursor: pointer;
+    transition: transform 0.15s; letter-spacing: 1px;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .success-msg { display: none; text-align: center; padding: 20px; }
+  .success-msg .big { font-size: 48px; }
+  .success-msg h3 { font-family: 'Noto Serif TC', serif; color: var(--teal); font-size: 20px; margin: 8px 0; }
+  .success-msg p { color: var(--text-mid); font-size: 13px; }
+
+  /* ── AI HELPER ── */
+  .chat-area { background: var(--cream); border-radius: 12px; padding: 12px; min-height: 220px; max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.6; }
+  .bubble-ai { align-self: flex-start; background: linear-gradient(135deg, var(--teal-dark), var(--teal)); color: white; border-bottom-left-radius: 4px; }
+  .bubble-user { align-self: flex-end; background: var(--gold); color: var(--teal-dark); border-bottom-right-radius: 4px; font-weight: 500; }
+  .bubble-thinking { align-self: flex-start; background: rgba(26,107,122,0.1); color: var(--text-mid); font-style: italic; font-size: 12px; }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input { flex: 1; padding: 11px 14px; border-radius: 12px; border: 1.5px solid rgba(26,107,122,0.2); background: white; font-size: 13px; font-family: 'Noto Sans TC', sans-serif; outline: none; }
+  .chat-input:focus { border-color: var(--teal); }
+  .chat-send { padding: 11px 16px; border-radius: 12px; border: none; background: var(--teal); color: white; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+  .chat-send:active { background: var(--teal-dark); }
+  .quick-questions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .quick-q { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--teal-light); background: rgba(26,107,122,0.05); color: var(--teal); font-size: 11px; cursor: pointer; transition: all 0.2s; font-family: 'Noto Sans TC', sans-serif; }
+  .quick-q:active { background: var(--teal); color: white; }
+
+  /* ── MATERIALS ── */
+  .material-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(201,168,76,0.2); }
+  .material-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .icon-pdf { background: #ffe8e8; }
+  .icon-doc { background: #e8eeff; }
+  .icon-video { background: #e8ffe8; }
+  .material-info h4 { font-size: 13px; font-weight: 700; color: var(--text-dark); }
+  .material-info p { font-size: 11px; color: var(--text-mid); margin-top: 2px; }
+  .material-dl { margin-left: auto; background: var(--teal); color: white; border: none; border-radius: 8px; padding: 6px 12px; font-size: 11px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+
+  /* ── PHOTOS ── */
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .photo-item { border-radius: 12px; overflow: hidden; aspect-ratio: 1; background: linear-gradient(135deg, var(--teal-dark), var(--teal-light)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: transform 0.2s; }
+  .photo-item:active { transform: scale(0.97); }
+  .photo-item .emoji { font-size: 36px; }
+  .photo-item .caption { color: rgba(255,255,255,0.8); font-size: 11px; text-align: center; padding: 0 8px; }
+  .photo-item.wide { grid-column: span 2; aspect-ratio: 2/1; }
+
+  /* ── UPLOAD ── */
+  .upload-zone {
+    border: 2px dashed rgba(26,107,122,0.4); border-radius: 14px;
+    padding: 30px 20px; text-align: center; background: var(--cream);
+    cursor: pointer; transition: all 0.2s; margin-bottom: 12px;
+  }
+  .upload-zone:active, .upload-zone.drag { border-color: var(--teal); background: rgba(26,107,122,0.05); }
+  .upload-zone .icon { font-size: 40px; margin-bottom: 8px; }
+  .upload-zone p { color: var(--text-mid); font-size: 13px; }
+  .upload-zone strong { color: var(--teal); }
+  .upload-list { list-style: none; }
+  .upload-list li { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--cream); border-radius: 10px; margin-bottom: 6px; font-size: 12px; color: var(--text-mid); }
+  .upload-list .file-icon { font-size: 18px; }
+  .upload-list .remove-btn { margin-left: auto; background: none; border: none; color: #cc4444; font-size: 16px; cursor: pointer; }
+
+  /* ── CONTACT ── */
+  .contact-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--cream); border-radius: 12px; margin-bottom: 8px; border: 1px solid rgba(201,168,76,0.2); cursor: pointer; transition: transform 0.15s; text-decoration: none; }
+  .contact-item:active { transform: scale(0.98); }
+  .contact-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .ci-ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+  .ci-map { background: #e8f4ff; }
+  .ci-phone { background: #e8ffe8; }
+  .contact-meta h4 { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+  .contact-meta p { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
+  .map-box { border-radius: 14px; overflow: hidden; background: linear-gradient(135deg, var(--teal-dark), var(--teal)); padding: 20px; text-align: center; color: white; margin-top: 8px; }
+  .map-box .map-icon { font-size: 40px; margin-bottom: 8px; }
+  .map-box h3 { font-family: 'Noto Serif TC', serif; font-size: 16px; margin-bottom: 6px; }
+  .map-box p { font-size: 13px; opacity: 0.8; line-height: 1.6; }
+
+  /* ── BOTTOM NAV ── */
+  #bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: var(--teal-dark); border-top: 1px solid rgba(201,168,76,0.3);
+    display: flex; padding: 6px 0 env(safe-area-inset-bottom);
+  }
+  .bnav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; cursor: pointer; transition: all 0.2s; background: none; border: none; }
+  .bnav-btn .bicon { font-size: 20px; transition: transform 0.2s; }
+  .bnav-btn .blabel { color: rgba(255,255,255,0.45); font-size: 9px; font-family: 'Noto Sans TC', sans-serif; }
+  .bnav-btn.active .blabel { color: var(--gold-light); }
+  .bnav-btn.active .bicon { transform: scale(1.15); }
+
+  /* ── SECTION TITLE ── */
+  .section-title { font-family: 'Noto Serif TC', serif; font-size: 16px; font-weight: 900; color: var(--gold-light); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent); }
+
+  /* ── TOAST ── */
+  #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--teal-dark); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 9000; border: 1px solid var(--gold); }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="crown">👑</div>
+  <h1>三冠王學院</h1>
+  <p>Triple Crown Academy</p>
+</div>
+
+<!-- Header -->
+<div id="header">
+  <div class="logo">
+    <span class="logo-icon">👑</span>
+    <div>
+      <div class="logo-text">三冠王學院</div>
+      <div class="logo-sub">國 · 英 · 數 制霸全場</div>
+    </div>
+  </div>
+  <div class="date-pill" id="headerDate"></div>
+</div>
+
+<!-- Nav -->
+<div id="nav">
+  <button class="nav-btn active" onclick="showPage('home')">🏠 首頁</button>
+  <button class="nav-btn" onclick="showPage('news')">📢 最新消息</button>
+  <button class="nav-btn" onclick="showPage('teachers')">👩‍🏫 師資介紹</button>
+  <button class="nav-btn" onclick="showPage('register')">📝 課程報名</button>
+  <button class="nav-btn" onclick="showPage('ai')">🤖 AI小幫手</button>
+  <button class="nav-btn" onclick="showPage('materials')">📚 課程教材</button>
+  <button class="nav-btn" onclick="showPage('schedule')">📅 每日課表</button>
+  <button class="nav-btn" onclick="showPage('rank')">🏆 榮譽榜單</button>
+  <button class="nav-btn" onclick="showPage('photos')">📸 相片牆</button>
+  <button class="nav-btn" onclick="showPage('upload')">📤 上傳作業</button>
+  <button class="nav-btn" onclick="showPage('contact')">📍 聯絡我們</button>
+</div>
+
+<div id="main">
+
+  <!-- ── HOME ── -->
+  <div class="page active" id="page-home">
+    <!-- Today's Quote -->
+    <div class="quote-box">
+      <div class="label">✨ 今日語錄</div>
+      <div class="quote-text" id="todayQuote">載入中...</div>
+      <div class="quote-num" id="quoteNum"></div>
+    </div>
+    <button class="btn-draw" onclick="drawQuote()" style="margin-bottom:14px">🎲 再抽一句語錄</button>
+
+    <!-- Welcome -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🌟</span><h2>歡迎來到三冠王學院</h2></div>
+      <div class="card-body">
+        <p style="font-size:13px;line-height:1.8;color:var(--text-mid)">
+          國文 · 英文 · 數學，三科全面制霸！<br>
+          我們用「職人教學法」，精準查漏、遊戲化激勵，<br>
+          搭配 AI 小幫手 24 小時陪你解題。<br>
+          <strong style="color:var(--teal)">終結重修不歸路，實力每一度。🎓</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:var(--card-bg);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(201,168,76,0.2)">
+        <div style="font-size:28px">📚</div>
+        <div style="font-size:20px;font-weight:900;color:var(--teal);font-family:'Noto Serif TC',serif">3</div>
+        <div style="font-size:10px;color:var(--text-mid)">核心科目</div>
+      </div>
+      <div style="background:var(--card-bg);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(201,168,76,0.2)">
+        <div style="font-size:28px">🏆</div>
+        <div style="font-size:20px;font-weight:900;color:var(--teal);font-family:'Noto Serif TC',serif">98%</div>
+        <div style="font-size:10px;color:var(--text-mid)">學生好評</div>
+      </div>
+      <div style="background:var(--card-bg);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(201,168,76,0.2)">
+        <div style="font-size:28px">🤖</div>
+        <div style="font-size:20px;font-weight:900;color:var(--teal);font-family:'Noto Serif TC',serif">24h</div>
+        <div style="font-size:10px;color:var(--text-mid)">AI解答</div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="card">
+      <div class="card-header"><span class="icon">⚙️</span><h2>核心理念</h2></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;background:rgba(26,107,122,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎯</div>
+            <div><strong style="font-size:13px">精準查漏</strong><br><span style="font-size:11px;color:var(--text-mid)">不重複練習，找到真正弱點</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;background:rgba(26,107,122,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎮</div>
+            <div><strong style="font-size:13px">遊戲化激勵</strong><br><span style="font-size:11px;color:var(--text-mid)">成就感慢慢累積，學習不無聊</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;background:rgba(26,107,122,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤖</div>
+            <div><strong style="font-size:13px">AI小幫手 24hr</strong><br><span style="font-size:11px;color:var(--text-mid)">隨時解答，不讓問題過夜</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;background:rgba(26,107,122,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🚀</div>
+            <div><strong style="font-size:13px">菁英模式</strong><br><span style="font-size:11px;color:var(--text-mid)">進步神速，超越自己每一天</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NEWS ── -->
+  <div class="page" id="page-news">
+    <div class="section-title">📢 最新消息</div>
+    <div class="card">
+      <div class="card-body" style="padding:0 16px">
+        <div class="news-item">
+          <div class="news-date">05<br>28</div>
+          <div class="news-content">
+            <span class="badge">重要</span>
+            <h3>🎉 暑期密集班開始報名！</h3>
+            <p>7月份暑期班課程全面開放，名額有限，先搶先贏！國英數三科同步加強。</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">05<br>20</div>
+          <div class="news-content">
+            <span class="badge">公告</span>
+            <h3>📝 段考衝刺班報名中</h3>
+            <p>針對段考重點題型，5堂密集課程幫你快速掌握考試重點！</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">05<br>15</div>
+          <div class="news-content">
+            <span class="badge">活動</span>
+            <h3>🏆 第三屆榮譽榜公告</h3>
+            <p>恭喜本期進步最多的同學！詳情請見榮譽榜單頁面。</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">05<br>10</div>
+          <div class="news-content">
+            <span class="badge">更新</span>
+            <h3>🤖 AI小幫手功能升級</h3>
+            <p>全新AI助教上線，支援數學解題步驟詳解，隨時隨地學習不間斷。</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">05<br>01</div>
+          <div class="news-content">
+            <h3>📚 新增英文閱讀測驗教材</h3>
+            <p>新增108課綱英文閱讀理解練習題庫，共50篇文章，可至教材區下載。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TEACHERS ── -->
+  <div class="page" id="page-teachers">
+    <div class="section-title">👩‍🏫 師資介紹</div>
+
+    <div class="teacher-card">
+      <div class="teacher-hero">
+        <div class="teacher-avatar">📖</div>
+        <div class="teacher-meta">
+          <h3>國文老師</h3>
+          <div class="subject">🇹🇼 國語文科 主任教師</div>
+          <div class="motto">「讀透文心，文思泉湧。」</div>
+        </div>
+      </div>
+      <div class="teacher-desc">
+        擁有多年國文教學經驗，專精古典文學與現代文學解析。教學方式生動活潑，善用情境引導學生理解文章深意。段考、會考、學測皆有豐富輔導經驗，帶領無數學生突破國文瓶頸，找到屬於自己的文字風格。
+      </div>
+    </div>
+
+    <div class="teacher-card">
+      <div class="teacher-hero">
+        <div class="teacher-avatar">🌍</div>
+        <div class="teacher-meta">
+          <h3>英文老師</h3>
+          <div class="subject">🇺🇸 英語文科 主任教師</div>
+          <div class="motto">「語通全球，精準表達。」</div>
+        </div>
+      </div>
+      <div class="teacher-desc">
+        英美文學背景，口說與閱讀並重。採用全英文沉浸式教學，配合生活化情境讓英文學習不再枯燥。專攻英文文法邏輯分析、閱讀技巧、寫作架構，讓同學從「背單字」進化到「真正懂英文」。
+      </div>
+    </div>
+
+    <div class="teacher-card">
+      <div class="teacher-hero">
+        <div class="teacher-avatar">🧮</div>
+        <div class="teacher-meta">
+          <h3>數學老師</h3>
+          <div class="subject">➕ 數理科 主任教師</div>
+          <div class="motto">「算無遺策，邏輯至上。」</div>
+        </div>
+      </div>
+      <div class="teacher-desc">
+        數理工程背景，化繁為簡是最大特色。擅長將複雜的數學觀念拆解成最直覺的邏輯步驟，讓同學「理解」而非「死背」。從基礎代數到微積分都難不倒，帶你建立強大的數學核心能力。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REGISTER ── -->
+  <div class="page" id="page-register">
+    <div class="section-title">📝 課程報名</div>
+    <div class="card">
+      <div class="card-header"><span class="icon">📋</span><h2>填寫報名資料</h2></div>
+      <div class="card-body" id="registerForm">
+        <div class="form-group">
+          <label class="form-label">姓名 *</label>
+          <input class="form-input" type="text" placeholder="請輸入學生姓名" id="reg_name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">年級 *</label>
+          <select class="form-select" id="reg_grade">
+            <option value="">請選擇年級</option>
+            <option>國一</option><option>國二</option><option>國三</option>
+            <option>高一</option><option>高二</option><option>高三</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">聯絡電話 *</label>
+          <input class="form-input" type="tel" placeholder="家長聯絡電話" id="reg_phone">
+        </div>
+        <div class="form-group">
+          <label class="form-label">報名科目 *</label>
+          <div class="checkbox-group" style="margin-top:6px">
+            <label class="checkbox-item"><input type="checkbox" value="國文"> 📖 國文</label>
+            <label class="checkbox-item"><input type="checkbox" value="英文"> 🌍 英文</label>
+            <label class="checkbox-item"><input type="checkbox" value="數學"> 🧮 數學</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">上課時段偏好</label>
+          <select class="form-select" id="reg_time">
+            <option value="">請選擇</option>
+            <option>平日下午（16:00-18:00）</option>
+            <option>平日晚上（19:00-21:00）</option>
+            <option>假日上午（09:00-11:00）</option>
+            <option>假日下午（14:00-16:00）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">其他備註</label>
+          <textarea class="form-textarea" placeholder="學習狀況、特殊需求..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="submitRegister()">🚀 確認報名</button>
+      </div>
+      <div class="success-msg" id="registerSuccess">
+        <div class="big">🎉</div>
+        <h3>報名成功！</h3>
+        <p>我們將在 24 小時內與您聯繫確認。<br>有問題請透過 IG 或電話聯絡我們。</p>
+        <button class="btn-primary" style="margin-top:16px" onclick="resetRegister()">再報名一位</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AI ── -->
+  <div class="page" id="page-ai">
+    <div class="section-title">🤖 AI小幫手</div>
+    <div class="card">
+      <div class="card-header"><span class="icon">💬</span><h2>24小時智能解題助教</h2></div>
+      <div class="card-body">
+        <div class="quick-questions">
+          <button class="quick-q" onclick="quickAsk('如何讀好古文？')">📖 古文技巧</button>
+          <button class="quick-q" onclick="quickAsk('英文文法總整理')">🌍 英文文法</button>
+          <button class="quick-q" onclick="quickAsk('二次方程式怎麼解？')">🧮 數學解題</button>
+          <button class="quick-q" onclick="quickAsk('段考怎麼準備最有效？')">📝 考試策略</button>
+        </div>
+        <div class="chat-area" id="chatArea"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" type="text" id="chatInput" placeholder="輸入你的問題..." onkeypress="if(event.key==='Enter')sendChat()">
+          <button class="chat-send" onclick="sendChat()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MATERIALS ── -->
+  <div class="page" id="page-materials">
+    <div class="section-title">📚 課程教材</div>
+    <div class="card">
+      <div class="card-header"><span class="icon">📖</span><h2>國文科</h2></div>
+      <div class="card-body">
+        <div class="material-item">
+          <div class="material-icon icon-pdf">📄</div>
+          <div class="material-info"><h4>古文30篇精解</h4><p>PDF · 共45頁 · 2024版</p></div>
+          <button class="material-dl" onclick="fakeDownload(this)">下載</button>
+        </div>
+        <div class="material-item">
+          <div class="material-icon icon-doc">📝</div>
+          <div class="material-info"><h4>現代文學閱讀測驗</h4><p>Word · 共30題 · 附解析</p></div>
+          <button class="material-dl" onclick="fakeDownload(this)">下載</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="icon">🌍</span><h2>英文科</h2></div>
+      <div class="card-body">
+        <div class="material-item">
+          <div class="material-icon icon-pdf">📄</div>
+          <div class="material-info"><h4>英文文法總整理</h4><p>PDF · 共60頁 · 108課綱</p></div>
+          <button class="material-dl" onclick="fakeDownload(this)">下載</button>
+        </div>
+        <div class="material-item">
+          <div class="material-icon icon-video">🎥</div>
+          <div class="material-info"><h4>英文閱讀理解50篇</h4><p>PDF · 各附解析 · 進階版</p></div>
+          <button class="material-dl" onclick="fakeDownload(this)">下載</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="icon">🧮</span><h2>數學科</h2></div>
+      <div class="card-body">
+        <div class="material-item">
+          <div class="material-icon icon-pdf">📄</div>
+          <div class="material-info"><h4>代數觀念精華筆記</h4><p>PDF · 含例題解析</p></div>
+          <button class="material-dl" onclick="fakeDownload(this)">下載</button>
+        </div>
+        <div class="material-item">
+          <div class="material-icon icon-doc">📝</div>
+          <div class="material-info"><h4>歷屆試題精選300題</h4><p>PDF · 附詳解 · 難度分級</p></div>
+          <button class="material-dl" onclick="fakeDownload(this)">下載</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCHEDULE ── -->
+  <div class="page" id="page-schedule">
+    <div class="section-title">📅 每週課表</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="day-tabs" id="dayTabs">
+          <button class="day-tab" onclick="showDay('mon',this)">週一</button>
+          <button class="day-tab" onclick="showDay('tue',this)">週二</button>
+          <button class="day-tab" onclick="showDay('wed',this)">週三</button>
+          <button class="day-tab" onclick="showDay('thu',this)">週四</button>
+          <button class="day-tab" onclick="showDay('fri',this)">週五</button>
+          <button class="day-tab" onclick="showDay('sat',this)">週六</button>
+          <button class="day-tab" onclick="showDay('sun',this)">週日</button>
+        </div>
+        <div id="scheduleContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RANK ── -->
+  <div class="page" id="page-rank">
+    <div class="section-title">🏆 榮譽榜單</div>
+    <div class="card">
+      <div class="card-header"><span class="icon">⭐</span><h2>本月進步之星</h2></div>
+      <div class="card-body">
+        <div class="rank-item">
+          <div class="rank-num rank-1">🥇</div>
+          <div class="rank-info"><h4>小明同學</h4><div class="rank-stars">★★★★★</div><p>國三 · 數學進步 38 分</p></div>
+          <div class="rank-score">+38</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-num rank-2">🥈</div>
+          <div class="rank-info"><h4>小華同學</h4><div class="rank-stars">★★★★★</div><p>高一 · 英文進步 32 分</p></div>
+          <div class="rank-score">+32</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-num rank-3">🥉</div>
+          <div class="rank-info"><h4>小美同學</h4><div class="rank-stars">★★★★☆</div><p>國二 · 國文進步 28 分</p></div>
+          <div class="rank-score">+28</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-num rank-other">4</div>
+          <div class="rank-info"><h4>小強同學</h4><div class="rank-stars">★★★★☆</div><p>高二 · 數學進步 25 分</p></div>
+          <div class="rank-score">+25</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-num rank-other">5</div>
+          <div class="rank-info"><h4>小玲同學</h4><div class="rank-stars">★★★☆☆</div><p>國一 · 英文進步 20 分</p></div>
+          <div class="rank-score">+20</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="icon">🎯</span><h2>學習成就勳章</h2></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center">
+          <div style="background:var(--cream);border-radius:12px;padding:12px;border:1px solid rgba(201,168,76,0.2)">
+            <div style="font-size:30px">🔥</div>
+            <div style="font-size:11px;font-weight:700;color:var(--teal)">連續出席</div>
+            <div style="font-size:10px;color:var(--text-mid)">30天不缺席</div>
+          </div>
+          <div style="background:var(--cream);border-radius:12px;padding:12px;border:1px solid rgba(201,168,76,0.2)">
+            <div style="font-size:30px">⚡</div>
+            <div style="font-size:11px;font-weight:700;color:var(--teal)">作業全交</div>
+            <div style="font-size:11px;color:var(--text-mid)">本月零缺交</div>
+          </div>
+          <div style="background:var(--cream);border-radius:12px;padding:12px;border:1px solid rgba(201,168,76,0.2)">
+            <div style="font-size:30px">👑</div>
+            <div style="font-size:11px;font-weight:700;color:var(--teal)">三冠王</div>
+            <div style="font-size:10px;color:var(--text-mid)">三科皆優</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PHOTOS ── -->
+  <div class="page" id="page-photos">
+    <div class="section-title">📸 相片牆</div>
+    <div class="photo-grid">
+      <div class="photo-item wide" onclick="showToast('📸 精彩上課時刻！')">
+        <div class="emoji">🎓</div>
+        <div class="caption">三冠王大家庭</div>
+      </div>
+      <div class="photo-item" onclick="showToast('📖 國文課進行中！')">
+        <div class="emoji">📖</div>
+        <div class="caption">國文課精彩片段</div>
+      </div>
+      <div class="photo-item" onclick="showToast('🌍 英文課互動熱烈！')">
+        <div class="emoji">🌍</div>
+        <div class="caption">英文課互動教學</div>
+      </div>
+      <div class="photo-item" onclick="showToast('🧮 數學課解題中！')">
+        <div class="emoji">🧮</div>
+        <div class="caption">數學解題挑戰</div>
+      </div>
+      <div class="photo-item" onclick="showToast('🏆 恭喜優秀同學！')">
+        <div class="emoji">🏆</div>
+        <div class="caption">頒獎典禮</div>
+      </div>
+      <div class="photo-item wide" onclick="showToast('🎉 結業式活動！')">
+        <div class="emoji">🎉</div>
+        <div class="caption">學期末慶祝活動</div>
+      </div>
+      <div class="photo-item" onclick="showToast('☕ 師生同樂！')">
+        <div class="emoji">☕</div>
+        <div class="caption">下課輕鬆時光</div>
+      </div>
+      <div class="photo-item" onclick="showToast('📝 衝刺！')">
+        <div class="emoji">📝</div>
+        <div class="caption">段考前衝刺</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <a href="https://www.instagram.com/triplecrownedu_" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,#f09433,#dc2743,#bc1888);color:white;text-decoration:none;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:700">
+        📷 追蹤 IG 看更多 @triplecrownedu_
+      </a>
+    </div>
+  </div>
+
+  <!-- ── UPLOAD ── -->
+  <div class="page" id="page-upload">
+    <div class="section-title">📤 上傳作業</div>
+    <div class="card">
+      <div class="card-header"><span class="icon">📎</span><h2>作業繳交</h2></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">學生姓名</label>
+          <input class="form-input" type="text" placeholder="你的名字" id="upload_name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">科目</label>
+          <select class="form-select" id="upload_subject">
+            <option>請選擇科目</option>
+            <option>國文</option><option>英文</option><option>數學</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">作業說明</label>
+          <input class="form-input" type="text" placeholder="例：第三章習題 p.45-50" id="upload_desc">
+        </div>
+        <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.docx" style="display:none" onchange="handleFiles(this.files)">
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+          <div class="icon">📁</div>
+          <p><strong>點此選擇檔案</strong><br>支援 PDF、圖片、Word</p>
+        </div>
+        <ul class="upload-list" id="uploadList"></ul>
+        <button class="btn-primary" onclick="submitUpload()">📤 送出作業</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONTACT ── -->
+  <div class="page" id="page-contact">
+    <div class="section-title">📍 聯絡我們</div>
+    <a class="contact-item" href="https://www.instagram.com/triplecrownedu_" target="_blank">
+      <div class="contact-icon ci-ig">📸</div>
+      <div class="contact-meta"><h4>Instagram</h4><p>@triplecrownedu_</p></div>
+      <span style="margin-left:auto;color:var(--text-mid)">›</span>
+    </a>
+    <div class="contact-item" onclick="showToast('📞 撥打中...')">
+      <div class="contact-icon ci-phone">📞</div>
+      <div class="contact-meta"><h4>聯絡電話</h4><p>請透過 IG 私訊取得電話</p></div>
+      <span style="margin-left:auto;color:var(--text-mid)">›</span>
+    </div>
+    <div class="map-box">
+      <div class="map-icon">📍</div>
+      <h3>教室地址</h3>
+      <p>請透過 Instagram @triplecrownedu_<br>私訊詢問詳細教室地址<br><br>上課地點位於方便交通地區<br>詳情由老師個別通知 🗺️</p>
+      <button onclick="window.open('https://www.instagram.com/triplecrownedu_','_blank')" style="margin-top:14px;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:10px 20px;font-size:13px;cursor:pointer;font-family:'Noto Sans TC',sans-serif">前往 IG 詢問地址</button>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-header"><span class="icon">⏰</span><h2>聯絡時間</h2></div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--text-mid);line-height:2">
+          📅 週一至週五：14:00 – 22:00<br>
+          📅 週六週日：09:00 – 20:00<br>
+          🤖 AI小幫手：24小時全年無休
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- Bottom Nav -->
+<div id="bottom-nav">
+  <button class="bnav-btn active" onclick="showPage('home')">
+    <span class="bicon">🏠</span><span class="blabel">首頁</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('schedule')">
+    <span class="bicon">📅</span><span class="blabel">課表</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('ai')">
+    <span class="bicon">🤖</span><span class="blabel">AI問答</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('rank')">
+    <span class="bicon">🏆</span><span class="blabel">榜單</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('contact')">
+    <span class="bicon">📍</span><span class="blabel">聯絡</span>
+  </button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── DATA ──
+const QUOTES = [
+  "讀書不是為了考試，而是為了遇見更好的自己。",
+  "每一次努力都是在存放未來的勇氣。",
+  "不怕學得慢，就怕學不完整。打好基礎，讓實力說話。",
+  "成功不是偶然，是每一個認真的當下累積出來的。",
+  "今日的困難題，是明日信心的來源。",
+  "學習是送給未來的自己最好的禮物。",
+  "只要不放棄，每個人都是自己的冠軍。",
+  "難不代表不可能，只代表你需要多一點時間。",
+  "你的潛力，比你想的還要大。相信自己，然後去證明。",
+  "每天進步一點點，一年後你就是另一個人。",
+  "認真的人最帥，努力的人最美。",
+  "遇到看不懂的題目，不是你不夠聰明，是你還沒找到方法。",
+  "學習路上的每一滴汗水，都是通往成功的門票。",
+  "不比昨天的別人，只比昨天的自己。進步就是勝利。",
+  "三冠王精神：國英數，一個都不能少！制霸全場！👑"
+];
+
+const SCHEDULE = {
+  mon: [
+    { time: "16:00-18:00", subj: "國文 基礎班", teacher: "國文老師", tag: "tag-cn" },
+    { time: "19:00-21:00", subj: "數學 進階班", teacher: "數學老師", tag: "tag-math" }
+  ],
+  tue: [
+    { time: "16:00-18:00", subj: "英文 基礎班", teacher: "英文老師", tag: "tag-en" },
+    { time: "19:00-21:00", subj: "國文 進階班", teacher: "國文老師", tag: "tag-cn" }
+  ],
+  wed: [
+    { time: "16:00-18:00", subj: "數學 基礎班", teacher: "數學老師", tag: "tag-math" },
+    { time: "19:00-21:00", subj: "英文 進階班", teacher: "英文老師", tag: "tag-en" }
+  ],
+  thu: [
+    { time: "16:00-18:00", subj: "國文 衝刺班", teacher: "國文老師", tag: "tag-cn" },
+    { time: "19:00-21:00", subj: "數學 衝刺班", teacher: "數學老師", tag: "tag-math" }
+  ],
+  fri: [
+    { time: "15:00-17:00", subj: "英文 會話班", teacher: "英文老師", tag: "tag-en" },
+    { time: "19:00-21:00", subj: "三科整合複習", teacher: "三位老師", tag: "tag-cn" }
+  ],
+  sat: [
+    { time: "09:00-11:00", subj: "國英數 假日密集班", teacher: "全體老師", tag: "tag-cn" },
+    { time: "14:00-16:00", subj: "數學 假日班", teacher: "數學老師", tag: "tag-math" },
+    { time: "16:00-18:00", subj: "英文 假日班", teacher: "英文老師", tag: "tag-en" }
+  ],
+  sun: [
+    { time: "09:00-11:00", subj: "國文 假日班", teacher: "國文老師", tag: "tag-cn" },
+    { time: "14:00-16:00", subj: "段考前衝刺（依考期開班）", teacher: "全體老師", tag: "tag-math" }
+  ]
+};
+
+const AI_RESPONSES = {
+  "古文": "讀古文最重要的是先理解文意，再掌握句型結構。推薦先看「之、乎、者、也」四大虛詞的用法，再練習整段翻譯。每天背3-5個常考字義，30天後你會發現古文根本難不倒你！💪",
+  "英文文法": "英文文法我推薦用「時態樹」來記憶！先掌握現在/過去/未來三大時態，再延伸完成式和進行式。建議搭配例句記憶，比單純背規則有效10倍。想要哪個文法點詳解？",
+  "方程式": "解方程式的核心是「移項」！記住：等號兩邊同加同減同乘同除，結果不變。二次方程式先試試因式分解，不行就用公式法：x = (-b ± √(b²-4ac)) / 2a。需要我舉例說明嗎？",
+  "段考": "段考準備黃金法則：提前2週開始，每天按科目輪流複習。重點看：課本畫線處、老師說「很重要」的部分、上次考錯的題型。考前一天不要熬夜，睡飽才能把學過的東西都想起來！",
+  "default": "這個問題很好！讓我來幫你分析一下。學習最重要的是找對方法，如果你有具體的題目或不懂的概念，可以繼續問我。我24小時都在線上，隨時為你解答！🤖✨"
+};
+
+// ── INIT ──
+window.onload = function() {
+  setTimeout(() => { document.getElementById('splash').classList.add('hide'); }, 1800);
+  
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    now.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric', weekday: 'short' });
+
+  // Today's quote (fixed by date)
+  const idx = now.getDate() % QUOTES.length;
+  document.getElementById('todayQuote').textContent = QUOTES[idx];
+  document.getElementById('quoteNum').textContent = `語錄 #${idx + 1} / ${QUOTES.length}`;
+
+  // Schedule: show today
+  const days = ['sun','mon','tue','wed','thu','fri','sat'];
+  const today = days[now.getDay()];
+  const tabs = document.querySelectorAll('.day-tab');
+  const dayMap = ['sun','mon','tue','wed','thu','fri','sat'];
+  tabs.forEach((t,i) => { if(dayMap[i+1] === today || (i===6 && today==='sun')) t.classList.add('active'); });
+  // Default to today
+  const dayBtns = document.querySelectorAll('.day-tab');
+  const todayIdx = ['mon','tue','wed','thu','fri','sat','sun'].indexOf(today);
+  if(todayIdx >= 0) { dayBtns.forEach(b=>b.classList.remove('active')); dayBtns[todayIdx].classList.add('active'); }
+  showDay(today);
+
+  // Init chat
+  appendBubble('ai', '你好！我是三冠王學院 AI 小幫手 🤖\n國文、英文、數學的問題，通通問我！隨時都在線上陪你讀書。');
+};
+
+// ── PAGES ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  window.scrollTo(0, 0);
+}
+
+// ── QUOTES ──
+let currentQuoteIdx = null;
+function drawQuote() {
+  let idx;
+  do { idx = Math.floor(Math.random() * QUOTES.length); } while (idx === currentQuoteIdx);
+  currentQuoteIdx = idx;
+  const el = document.getElementById('todayQuote');
+  el.style.opacity = 0;
+  setTimeout(() => {
+    el.textContent = QUOTES[idx];
+    document.getElementById('quoteNum').textContent = `語錄 #${idx + 1} / ${QUOTES.length}`;
+    el.style.transition = 'opacity 0.4s';
+    el.style.opacity = 1;
+  }, 200);
+  showToast('✨ 抽到第 ' + (idx + 1) + ' 句語錄！');
+}
+
+// ── SCHEDULE ──
+function showDay(day, btn) {
+  if(btn) { document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  const slots = SCHEDULE[day] || [];
+  const cont = document.getElementById('scheduleContent');
+  if(!slots.length) { cont.innerHTML = '<p style="color:var(--text-mid);font-size:13px;text-align:center;padding:20px">今天沒有排課，好好休息！😊</p>'; return; }
+  cont.innerHTML = slots.map(s => `
+    <div class="schedule-slot">
+      <div class="slot-time">${s.time}</div>
+      <div class="slot-info"><h4>${s.subj}</h4><p>${s.teacher}</p></div>
+      <span class="slot-tag ${s.tag}">${s.tag==='tag-cn'?'國文':s.tag==='tag-en'?'英文':'數學'}</span>
+    </div>
+  `).join('');
+}
+
+// ── REGISTER ──
+function submitRegister() {
+  const name = document.getElementById('reg_name').value;
+  const grade = document.getElementById('reg_grade').value;
+  const phone = document.getElementById('reg_phone').value;
+  if(!name || !grade || !phone) { showToast('⚠️ 請填寫必填欄位'); return; }
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('registerSuccess').style.display = 'block';
+}
+function resetRegister() {
+  document.getElementById('registerForm').style.display = 'block';
+  document.getElementById('registerSuccess').style.display = 'none';
+  document.getElementById('reg_name').value = '';
+  document.getElementById('reg_grade').value = '';
+  document.getElementById('reg_phone').value = '';
+}
+
+// ── AI CHAT ──
+function appendBubble(type, text) {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble bubble-' + type;
+  div.textContent = text;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if(!q) return;
+  input.value = '';
+  appendBubble('user', q);
+  appendBubble('thinking', 'AI 思考中...');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: '你是三冠王學院（Triple Crown Academy）的AI小幫手，專門幫國高中生解答國文、英文、數學問題。回答要簡潔清楚，用繁體中文，偶爾加emoji讓回答更活潑。補習班專注在台灣國高中課程。',
+        messages: [{ role: 'user', content: q }]
+      })
+    });
+    const data = await res.json();
+    document.getElementById('chatArea').lastChild.remove();
+    const answer = data.content?.map(i => i.text || '').join('') || '抱歉，我暫時無法回答，請稍後再試。';
+    appendBubble('ai', answer);
+  } catch(e) {
+    document.getElementById('chatArea').lastChild.remove();
+    // Fallback local response
+    let resp = AI_RESPONSES.default;
+    for(const [key, val] of Object.entries(AI_RESPONSES)) {
+      if(q.includes(key)) { resp = val; break; }
+    }
+    appendBubble('ai', resp);
+  }
+}
+
+function quickAsk(q) {
+  document.getElementById('chatInput').value = q;
+  sendChat();
+}
+
+// ── UPLOAD ──
+let uploadedFiles = [];
+function handleFiles(files) {
+  Array.from(files).forEach(f => {
+    uploadedFiles.push(f);
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="file-icon">📄</span><span>${f.name}</span><span style="color:var(--text-mid);font-size:10px;margin-left:4px">${(f.size/1024).toFixed(1)}KB</span><button class="remove-btn" onclick="removeFile(this,'${f.name}')">✕</button>`;
+    document.getElementById('uploadList').appendChild(li);
+  });
+}
+function removeFile(btn, name) {
+  uploadedFiles = uploadedFiles.filter(f => f.name !== name);
+  btn.parentElement.remove();
+}
+function submitUpload() {
+  const name = document.getElementById('upload_name').value;
+  const subject = document.getElementById('upload_subject').value;
+  if(!name || subject === '請選擇科目') { showToast('⚠️ 請填寫姓名與科目'); return; }
+  if(uploadedFiles.length === 0) { showToast('⚠️ 請選擇要上傳的檔案'); return; }
+  showToast('✅ 作業上傳成功！老師已收到 📬');
+  uploadedFiles = [];
+  document.getElementById('uploadList').innerHTML = '';
+  document.getElementById('upload_name').value = '';
+}
+
+// ── MATERIALS ──
+function fakeDownload(btn) {
+  btn.textContent = '✓';
+  btn.style.background = '#4caf50';
+  showToast('📥 下載中，請稍候...');
+  setTimeout(() => { btn.textContent = '下載'; btn.style.background = ''; }, 2000);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
